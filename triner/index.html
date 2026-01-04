@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journey Workout Project</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .tab-active { border-bottom-color: #2563eb; color: #2563eb; }
+        .tab-inactive { border-bottom-color: transparent; color: #64748b; }
+        .tab-inactive:hover { color: #334155; }
+        
+        /* Checkbox animation */
+        .check-anim { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .check-anim:active { transform: scale(0.95); }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen pb-12">
+
+    <!-- Header -->
+    <div class="bg-slate-900 text-white p-6 shadow-lg">
+        <div class="max-w-3xl mx-auto">
+            <h1 className="text-2xl font-bold flex items-center gap-3">
+                <i data-lucide="activity" class="inline-block w-6 h-6 text-blue-400 mr-2"></i>
+                Journey Workout Project
+            </h1>
+            <p class="text-slate-400 mt-2 text-sm">
+                Weekly Plan • Sun to Sat • Scale check-in Thursday
+            </p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="sticky top-0 bg-white border-b border-slate-200 z-10 shadow-sm overflow-x-auto">
+        <div class="max-w-3xl mx-auto flex">
+            <button onclick="renderTab('workoutA')" id="tab-workoutA" class="flex-1 py-4 px-2 text-sm font-bold border-b-2 transition-colors whitespace-nowrap tab-active">
+                Full Body A
+            </button>
+            <button onclick="renderTab('workoutB')" id="tab-workoutB" class="flex-1 py-4 px-2 text-sm font-bold border-b-2 transition-colors whitespace-nowrap tab-inactive">
+                Full Body B
+            </button>
+            <button onclick="renderTab('schedule')" id="tab-schedule" class="flex-1 py-4 px-2 text-sm font-bold border-b-2 transition-colors whitespace-nowrap tab-inactive">
+                Weekly Schedule
+            </button>
+        </div>
+    </div>
+
+    <!-- Content Area -->
+    <div id="app-content" class="max-w-3xl mx-auto p-4 pt-6">
+        <!-- Content injected via JS -->
+    </div>
+
+    <script>
+        // --- STATE MANAGEMENT ---
+        const STORAGE_KEY = 'journey_workout_progress';
+        
+        function getProgress() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            return stored ? JSON.parse(stored) : {};
+        }
+
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        function toggleExercise(name) {
+            const progress = getProgress();
+            progress[name] = !progress[name];
+            saveProgress(progress);
+            
+            // Re-render to update UI
+            const activeTab = document.querySelector('.tab-active').id.replace('tab-', '');
+            renderTab(activeTab);
+        }
+
+        function resetDay() {
+            if(confirm("Are you sure you want to finish and reset for the next day?")) {
+                const progress = getProgress();
+                // We only clear the exercises currently in the active tab (or all if preferred).
+                // For simplicity, let's clear all since the user finishes the day.
+                localStorage.removeItem(STORAGE_KEY);
+                
+                // Re-render
+                const activeTab = document.querySelector('.tab-active').id.replace('tab-', '');
+                renderTab(activeTab);
+            }
+        }
+
+        // --- DATA ---
+        const workoutA = [
+            {
+                name: "Goblet Squat",
+                sets: "3",
+                reps: "12",
+                muscles: "Quads, Glutes, Core",
+                // Updated to look for local file
+                image: "Goblet Squat.webp",
+                instructions: [
+                    "Hold one dumbbell vertically against your chest with both hands cupping the top end.",
+                    "Stand with feet slightly wider than shoulder-width.",
+                    "Lower your hips back and down as if sitting in a low chair.",
+                    "Keep your chest up and elbows inside your knees at the bottom.",
+                    "Drive back up through your heels."
+                ]
+            },
+            {
+                name: "Dumbbell Shoulder Press",
+                sets: "3",
+                reps: "10",
+                muscles: "Shoulders, Triceps",
+                image: "Dumbbell Shoulder Press.webp",
+                instructions: [
+                    "Stand or sit holding dumbbells at shoulder height, palms facing forward.",
+                    "Press the weights straight up until arms are fully extended.",
+                    "Lower them back down slowly to the starting position.",
+                    "Keep your core tight to avoid arching your back."
+                ]
+            },
+            {
+                name: "Dumbbell Bent-Over Row",
+                sets: "3",
+                reps: "12",
+                muscles: "Back (Lats), Biceps",
+                image: "Dumbbell Bent-Over Row.webp",
+                instructions: [
+                    "Hold a dumbbell in each hand.",
+                    "Hinge at your hips until your torso is almost parallel to the floor.",
+                    "Keep your back flat, not rounded.",
+                    "Pull the weights towards your hips, squeezing your shoulder blades together.",
+                    "Lower slowly."
+                ]
+            },
+            {
+                name: "Dumbbell Romanian Deadlift",
+                sets: "3",
+                reps: "12",
+                muscles: "Hamstrings, Glutes, Lower Back",
+                image: "Dumbbell Romanian Deadlift.webp",
+                instructions: [
+                    "Stand with dumbbells hanging in front of your thighs.",
+                    "Keep a slight bend in your knees (don't lock them).",
+                    "Push your hips WAY back while lowering the weights toward your shins.",
+                    "Stop when you feel a stretch in your hamstrings.",
+                    "Squeeze your glutes to stand back up."
+                ]
+            },
+            {
+                name: "Plank",
+                sets: "3",
+                reps: "30-45 sec",
+                muscles: "Core, Abs",
+                image: "Plank.webp",
+                instructions: [
+                    "Get into a push-up position but rest on your forearms.",
+                    "Your body should form a straight line from head to heels.",
+                    "Squeeze your glutes and pull your belly button to your spine.",
+                    "Hold without letting your hips sag or hike up."
+                ]
+            }
+        ];
+
+        const workoutB = [
+            {
+                name: "Reverse Lunges",
+                sets: "3",
+                reps: "10 each",
+                muscles: "Quads, Glutes",
+                image: "Reverse Lunges.webp",
+                instructions: [
+                    "Stand tall with dumbbells in hands by your sides.",
+                    "Step one foot back and lower your back knee toward the ground.",
+                    "Both knees should bend to about 90 degrees.",
+                    "Push through your front heel to return to standing.",
+                    "Alternate legs or do all reps on one side then switch."
+                ]
+            },
+            {
+                name: "Dumbbell Chest Press (Floor)",
+                sets: "3",
+                reps: "10",
+                muscles: "Chest, Triceps, Front Shoulders",
+                image: "Dumbbell Chest Press (Floor).webp",
+                instructions: [
+                    "Lie flat on the floor with knees bent and feet flat.",
+                    "Hold dumbbells above your chest with arms straight.",
+                    "Lower the weights until your triceps (back of arm) gently touch the floor.",
+                    "Press back up to the start.",
+                    "Keep your elbows at a 45-degree angle from your body."
+                ]
+            },
+            {
+                name: "Dumbbell Lateral Raise",
+                sets: "3",
+                reps: "12",
+                muscles: "Side Shoulders",
+                image: "Dumbbell Lateral Raise.webp",
+                instructions: [
+                    "Stand holding dumbbells at your sides.",
+                    "Raise your arms out to the sides until they reach shoulder height.",
+                    "Keep a slight bend in your elbows.",
+                    "Lower slowly back to your sides."
+                ]
+            },
+            {
+                name: "Dumbbell Biceps Curl",
+                sets: "3",
+                reps: "12",
+                muscles: "Biceps",
+                image: "Dumbbell Biceps Curl.webp",
+                instructions: [
+                    "Hold dumbbells with palms facing forward.",
+                    "Keep elbows glued to your sides.",
+                    "Curl the weights up towards your shoulders.",
+                    "Squeeze at the top and lower slowly."
+                ]
+            },
+            {
+                name: "Dumbbell Triceps Extension",
+                sets: "3",
+                reps: "12",
+                muscles: "Triceps",
+                image: "Dumbbell Triceps Extension.webp",
+                instructions: [
+                    "Can be done standing or lying down (skullcrushers).",
+                    "Hold one dumbbell with both hands overhead (or two lighter ones).",
+                    "Bend your elbows to lower the weight behind your head.",
+                    "Keep your upper arms still and close to your head.",
+                    "Extend arms back up to the ceiling."
+                ]
+            }
+        ];
+
+        const scheduleData = [
+            { day: "Sunday", title: "Full Body A", routine: [{type:'exercise', text:'Start Day! Main Workout A'}, {type:'cardio', text:'Walk 10-20 min'}] },
+            { day: "Monday", title: "Full Body B", routine: [{type:'exercise', text:'Main Workout B'}, {type:'cardio', text:'Walk 10-20 min'}] },
+            { day: "Tuesday", title: "Active Recovery", isRest: true, routine: [{type:'cardio', text:'Walk 20-30 min'}, {type:'cardio', text:'Light Stretching & Breathing'}] },
+            { day: "Wednesday", title: "Full Body A", routine: [{type:'exercise', text:'Main Workout A'}, {type:'cardio', text:'Walk 10-20 min'}] },
+            { day: "Thursday", title: "Full Body B + Scale", routine: [{type:'exercise', text:'Scale Check-in (Morning Fasted)'}, {type:'exercise', text:'Main Workout B'}, {type:'cardio', text:'Walk 10-20 min'}] },
+            { day: "Friday", title: "Cardio & Mobility", isRest: true, routine: [{type:'cardio', text:'Walk 30 min'}, {type:'cardio', text:'Mobility Routine 10 min'}] },
+            { day: "Saturday", title: "Full Rest", isRest: true, routine: [{type:'cardio', text:'Optional light walk'}] },
+        ];
+
+        // --- RENDER FUNCTIONS ---
+
+        function renderExerciseCard(ex) {
+            const progress = getProgress();
+            const isCompleted = progress[ex.name] === true;
+            
+            const cardClass = isCompleted 
+                ? "bg-emerald-50 border-emerald-200" 
+                : "bg-white border-slate-200";
+                
+            const headerClass = isCompleted
+                ? "bg-emerald-100 border-emerald-200"
+                : "bg-slate-50 border-slate-100";
+
+            const btnClass = isCompleted
+                ? "bg-emerald-500 hover:bg-emerald-600 text-white"
+                : "bg-white hover:bg-slate-50 text-slate-400 border border-slate-300";
+
+            const btnIcon = isCompleted ? "check" : "circle";
+
+            const imageHtml = ex.image ? `
+                <div class="w-full h-64 ${isCompleted ? 'bg-emerald-50/50' : 'bg-slate-100'} flex items-center justify-center overflow-hidden border-b ${isCompleted ? 'border-emerald-100' : 'border-slate-100'}">
+                    <img src="${ex.image}" alt="${ex.name}" class="w-full h-full object-contain p-2">
+                </div>
+            ` : '';
+
+            const instructionsHtml = ex.instructions.map(step => `
+                <li class="flex items-start gap-2 text-slate-700 text-sm">
+                    <span class="mt-1 min-w-[6px] h-[6px] rounded-full bg-blue-400 block"></span>
+                    ${step}
+                </li>
+            `).join('');
+
+            return `
+            <div class="${cardClass} rounded-xl shadow-sm border overflow-hidden hover:shadow-md transition-all duration-300 mb-6">
+                <div class="${headerClass} p-4 border-b flex justify-between items-center">
+                    <div class="flex-1">
+                        <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
+                            <i data-lucide="dumbbell" class="w-5 h-5 text-blue-600"></i>
+                            ${ex.name}
+                        </h3>
+                        <p class="text-slate-500 text-sm mt-1">${ex.muscles}</p>
+                    </div>
+                    
+                    <div class="flex items-center gap-3">
+                        <div class="text-right hidden sm:block">
+                            <div class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-semibold">
+                                ${ex.sets} Sets
+                            </div>
+                            <div class="inline-block ml-1 bg-emerald-100 text-emerald-800 text-xs px-2 py-1 rounded-full font-semibold">
+                                ${ex.reps} Reps
+                            </div>
+                        </div>
+                        <button onclick="toggleExercise('${ex.name}')" class="${btnClass} w-10 h-10 rounded-full flex items-center justify-center shadow-sm check-anim" title="Mark as Complete">
+                            <i data-lucide="${btnIcon}" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                ${imageHtml}
+                
+                <div class="p-5">
+                    <div class="mb-4">
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">How to Perform</h4>
+                        <ul class="space-y-2">
+                            ${instructionsHtml}
+                        </ul>
+                    </div>
+
+                    <button 
+                        onclick="window.open('https://www.youtube.com/results?search_query=how+to+do+${ex.name.replace(/ /g, '+')}', '_blank')"
+                        class="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+                    >
+                        <i data-lucide="play-circle" class="w-4 h-4"></i>
+                        Watch Video Demo
+                    </button>
+                </div>
+            </div>
+            `;
+        }
+
+        function renderScheduleDay(day) {
+            const badgeClass = day.isRest ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600';
+            const listItems = day.routine.map(item => `
+                <li class="text-sm text-slate-600 flex items-center gap-2">
+                    ${item.type === 'exercise' 
+                        ? '<div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div>' 
+                        : '<i data-lucide="activity" class="w-3 h-3 text-emerald-500"></i>'}
+                    ${item.text}
+                </li>
+            `).join('');
+
+            return `
+            <div class="bg-white p-4 rounded-xl border border-slate-200 mb-4">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-bold text-slate-800">${day.day}</h3>
+                    <span class="text-xs px-2 py-1 rounded-full font-medium ${badgeClass}">
+                        ${day.title}
+                    </span>
+                </div>
+                <ul class="space-y-2">
+                    ${listItems}
+                </ul>
+            </div>
+            `;
+        }
+
+        function renderTab(tabName) {
+            const container = document.getElementById('app-content');
+            
+            // Update Tab Styles
+            ['workoutA', 'workoutB', 'schedule'].forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                if (t === tabName) {
+                    btn.classList.add('tab-active', 'border-blue-600');
+                    btn.classList.remove('tab-inactive', 'border-transparent');
+                } else {
+                    btn.classList.remove('tab-active', 'border-blue-600');
+                    btn.classList.add('tab-inactive', 'border-transparent');
+                }
+            });
+
+            // Render Content
+            let content = `<div class="fade-in">`;
+            
+            if (tabName === 'workoutA') {
+                content += `
+                    <div class="bg-blue-50 border border-blue-100 p-4 rounded-lg mb-6 flex gap-3">
+                        <i data-lucide="calendar" class="w-5 h-5 text-blue-600 shrink-0 mt-0.5"></i>
+                        <p class="text-sm text-blue-800">
+                            <strong>Schedule:</strong> Perform this routine on <span class="underline decoration-blue-400 decoration-2">Sunday</span> and <span class="underline decoration-blue-400 decoration-2">Wednesday</span>.
+                        </p>
+                    </div>
+                `;
+                content += workoutA.map(renderExerciseCard).join('');
+                content += renderResetButton();
+            } else if (tabName === 'workoutB') {
+                content += `
+                    <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-lg mb-6 flex gap-3">
+                        <i data-lucide="calendar" class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5"></i>
+                        <div class="text-sm text-emerald-800">
+                            <p><strong>Schedule:</strong> Perform this routine on <span class="underline decoration-emerald-400 decoration-2">Monday</span> and <span class="underline decoration-emerald-400 decoration-2">Thursday</span>.</p>
+                            <p class="mt-1 text-xs opacity-90">*Thursday is also Scale Check-in day (morning, fasted).</p>
+                        </div>
+                    </div>
+                `;
+                content += workoutB.map(renderExerciseCard).join('');
+                content += renderResetButton();
+            } else if (tabName === 'schedule') {
+                content += `
+                    <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i data-lucide="clock" class="w-5 h-5"></i>
+                        Weekly Overview
+                    </h2>
+                    <div class="grid gap-2">
+                        ${scheduleData.map(renderScheduleDay).join('')}
+                    </div>
+                    <div class="mt-8 bg-slate-800 text-slate-300 p-5 rounded-xl">
+                        <h3 class="text-white font-bold flex items-center gap-2 mb-3">
+                            <i data-lucide="check-circle" class="w-4 h-4"></i>
+                            Key Reminders
+                        </h3>
+                        <ul class="space-y-2 text-sm">
+                            <li>• Rest 60-90 seconds between sets.</li>
+                            <li>• Focus on good form before increasing reps.</li>
+                            <li>• Do NOT react emotionally to scale numbers—watch the weekly trend.</li>
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            content += `</div>`;
+            container.innerHTML = content;
+            
+            // Re-initialize icons for new content
+            lucide.createIcons();
+        }
+
+        function renderResetButton() {
+            return `
+                <div class="mt-8 pt-6 border-t border-slate-200 text-center">
+                    <p class="text-slate-500 text-sm mb-4">Finished with your workout?</p>
+                    <button onclick="resetDay()" class="inline-flex items-center gap-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 px-8 rounded-full transition-colors">
+                        <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+                        Reset for Tomorrow
+                    </button>
+                </div>
+            `;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTab('workoutA');
+        });
+
+    </script>
+</body>
+</html>
