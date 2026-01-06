@@ -1,55 +1,251 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Journey Workout Project</title>
-    
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    
+
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        .fade-in { animation: fadeIn 0.5s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .tab-active { border-bottom-color: #2563eb; color: #2563eb; }
-        .tab-inactive { border-bottom-color: transparent; color: #64748b; }
-        .tab-inactive:hover { color: #334155; }
-        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tab-active {
+            border-bottom-color: #2563eb;
+            color: #2563eb;
+        }
+
+        .tab-inactive {
+            border-bottom-color: transparent;
+            color: #64748b;
+        }
+
+        .tab-inactive:hover {
+            color: #334155;
+        }
+
         /* Checkbox animation */
-        .check-anim { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
-        .check-anim:active { transform: scale(0.95); }
+        .check-anim {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .check-anim:active {
+            transform: scale(0.95);
+        }
+
+        /* Counter button styles */
+        .counter-btn {
+            transition: all 0.15s ease;
+            user-select: none;
+        }
+
+        .counter-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .counter-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* BMI result colors */
+        .bmi-underweight {
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+        }
+
+        .bmi-normal {
+            background: linear-gradient(135deg, #34d399, #10b981);
+        }
+
+        .bmi-overweight {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        }
+
+        .bmi-obese {
+            background: linear-gradient(135deg, #f87171, #ef4444);
+        }
+
+        /* Dark mode styles */
+        .dark {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+        }
+
+        .dark body,
+        body.dark {
+            background-color: #0f172a;
+            color: #f1f5f9;
+        }
+
+        .dark .bg-slate-50 {
+            background-color: #0f172a;
+        }
+
+        .dark .bg-white {
+            background-color: #1e293b;
+        }
+
+        .dark .bg-slate-100 {
+            background-color: #1e293b;
+        }
+
+        .dark .bg-slate-50\/50 {
+            background-color: rgba(30, 41, 59, 0.5);
+        }
+
+        .dark .border-slate-200 {
+            border-color: #334155;
+        }
+
+        .dark .border-slate-100 {
+            border-color: #334155;
+        }
+
+        .dark .border-slate-300 {
+            border-color: #475569;
+        }
+
+        .dark .text-slate-800 {
+            color: #f1f5f9;
+        }
+
+        .dark .text-slate-700 {
+            color: #e2e8f0;
+        }
+
+        .dark .text-slate-600 {
+            color: #cbd5e1;
+        }
+
+        .dark .text-slate-500 {
+            color: #94a3b8;
+        }
+
+        .dark .text-slate-400 {
+            color: #64748b;
+        }
+
+        .dark .hover\:bg-slate-50:hover {
+            background-color: #334155;
+        }
+
+        .dark .bg-slate-200 {
+            background-color: #334155;
+        }
+
+        .dark .hover\:bg-slate-300:hover {
+            background-color: #475569;
+        }
+
+        /* Dark mode for specific components */
+        .dark .bg-blue-50 {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        .dark .bg-emerald-50 {
+            background-color: rgba(16, 185, 129, 0.1);
+        }
+
+        .dark .bg-orange-50 {
+            background-color: rgba(249, 115, 22, 0.1);
+        }
+
+        .dark .bg-orange-100 {
+            background-color: rgba(249, 115, 22, 0.15);
+        }
+
+        .dark .border-blue-100 {
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .dark .border-emerald-100 {
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .dark .border-orange-200 {
+            border-color: rgba(249, 115, 22, 0.3);
+        }
+
+        /* Dark mode toggle button */
+        .theme-toggle {
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(15deg);
+        }
     </style>
 </head>
+
 <body class="bg-slate-50 min-h-screen pb-12">
 
     <!-- Header -->
     <div class="bg-slate-900 text-white p-6 shadow-lg">
         <div class="max-w-3xl mx-auto">
-            <h1 className="text-2xl font-bold flex items-center gap-3">
-                <i data-lucide="activity" class="inline-block w-6 h-6 text-blue-400 mr-2"></i>
-                Journey Workout Project
-            </h1>
-            <p class="text-slate-400 mt-2 text-sm">
-                Weekly Plan • Sun to Sat • Scale check-in Thursday
-            </p>
+            <div class="flex justify-between items-start">
+                <div>
+                    <h1 className="text-2xl font-bold flex items-center gap-3">
+                        <i data-lucide="activity" class="inline-block w-6 h-6 text-blue-400 mr-2"></i>
+                        Journey Workout Project
+                    </h1>
+                    <p class="text-slate-400 mt-2 text-sm" id="header-subtitle">
+                        Weekly Plan • Scale check-in Thursday
+                    </p>
+                </div>
+                <button onclick="toggleDarkMode()"
+                    class="theme-toggle p-2 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors"
+                    title="Toggle Dark/Light Mode">
+                    <i data-lucide="sun" id="theme-icon-sun" class="w-5 h-5 text-yellow-400 hidden"></i>
+                    <i data-lucide="moon" id="theme-icon-moon" class="w-5 h-5 text-slate-400"></i>
+                </button>
+            </div>
         </div>
     </div>
 
     <!-- Navigation -->
     <div class="sticky top-0 bg-white border-b border-slate-200 z-10 shadow-sm overflow-x-auto">
         <div class="max-w-3xl mx-auto flex">
-            <button onclick="renderTab('workoutA')" id="tab-workoutA" class="flex-1 py-4 px-2 text-sm font-bold border-b-2 transition-colors whitespace-nowrap tab-active">
+            <button onclick="renderTab('workoutA')" id="tab-workoutA"
+                class="flex-1 py-4 px-2 text-sm font-bold border-b-2 transition-colors whitespace-nowrap tab-active">
                 Full Body A
             </button>
-            <button onclick="renderTab('workoutB')" id="tab-workoutB" class="flex-1 py-4 px-2 text-sm font-bold border-b-2 transition-colors whitespace-nowrap tab-inactive">
+            <button onclick="renderTab('workoutB')" id="tab-workoutB"
+                class="flex-1 py-4 px-2 text-sm font-bold border-b-2 transition-colors whitespace-nowrap tab-inactive">
                 Full Body B
             </button>
-            <button onclick="renderTab('schedule')" id="tab-schedule" class="flex-1 py-4 px-2 text-sm font-bold border-b-2 transition-colors whitespace-nowrap tab-inactive">
+            <button onclick="renderTab('schedule')" id="tab-schedule"
+                class="flex-1 py-4 px-2 text-sm font-bold border-b-2 transition-colors whitespace-nowrap tab-inactive">
                 Weekly Schedule
+            </button>
+            <button onclick="renderTab('bmi')" id="tab-bmi"
+                class="flex-1 py-4 px-2 text-sm font-bold border-b-2 transition-colors whitespace-nowrap tab-inactive">
+                Weight Calculator
             </button>
         </div>
     </div>
@@ -62,7 +258,38 @@
     <script>
         // --- STATE MANAGEMENT ---
         const STORAGE_KEY = 'journey_workout_progress';
-        
+        const EXERCISE_SETTINGS_KEY = 'journey_exercise_settings';
+        const WEEK_START_KEY = 'journey_week_start';
+        const BMI_DATA_KEY = 'journey_bmi_data';
+        const WEIGHT_HISTORY_KEY = 'journey_weight_history';
+        const WARMUP_VISIBLE_KEY = 'journey_warmup_visible';
+        const DARK_MODE_KEY = 'journey_dark_mode';
+        const SCALE_DAY_KEY = 'journey_scale_day';
+
+        const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+        // Warm-up exercises data
+        const warmupExercises = [
+            {
+                name: "Arm Circles",
+                duration: "30-60 sec",
+                image: "Arm Circles.webp",
+                instructions: "Start with small forward arm circles, gradually increasing size for 15-30 seconds, then reverse for another 15-30 seconds. Follow with cross-body arm swings, alternating sides, for about 15-30 seconds to loosen the chest and shoulders before increasing intensity to full rotations."
+            },
+            {
+                name: "Leg Swings",
+                duration: "30 sec each leg",
+                image: "Leg Swings.webp",
+                instructions: "Swing one leg forward and back, then side to side, holding onto a wall for balance if needed. Do 10-15 swings in each direction per leg."
+            },
+            {
+                name: "Torso Twists",
+                duration: "30 sec",
+                image: "Torse Twists.webp",
+                instructions: "Stand tall with your feet shoulder width apart. Place your hands on your hips or hold them at your side with a 90 degree bend at the elbow. Twist from side to side by rotating your upper body from the hips, bringing the head around and pivoting on the feet."
+            }
+        ];
+
         function getProgress() {
             const stored = localStorage.getItem(STORAGE_KEY);
             return stored ? JSON.parse(stored) : {};
@@ -72,23 +299,187 @@
             localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
         }
 
+        function getExerciseSettings() {
+            const stored = localStorage.getItem(EXERCISE_SETTINGS_KEY);
+            return stored ? JSON.parse(stored) : {};
+        }
+
+        function saveExerciseSettings(settings) {
+            localStorage.setItem(EXERCISE_SETTINGS_KEY, JSON.stringify(settings));
+        }
+
+        function getWeekStart() {
+            return localStorage.getItem(WEEK_START_KEY) || 'Sunday';
+        }
+
+        function setWeekStart(day) {
+            localStorage.setItem(WEEK_START_KEY, day);
+            updateHeaderSubtitle();
+        }
+
+        // Scale day functions
+        function getScaleDay() {
+            return localStorage.getItem(SCALE_DAY_KEY) || 'Thursday';
+        }
+
+        function setScaleDay(day) {
+            localStorage.setItem(SCALE_DAY_KEY, day);
+            updateHeaderSubtitle();
+        }
+
+        // Dark mode functions
+        function getDarkMode() {
+            return localStorage.getItem(DARK_MODE_KEY) === 'true';
+        }
+
+        function setDarkMode(enabled) {
+            localStorage.setItem(DARK_MODE_KEY, enabled);
+        }
+
+        function toggleDarkMode() {
+            const isDark = getDarkMode();
+            setDarkMode(!isDark);
+            applyDarkMode(!isDark);
+        }
+
+        function applyDarkMode(isDark) {
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                document.body.classList.add('dark');
+                document.getElementById('theme-icon-sun').classList.remove('hidden');
+                document.getElementById('theme-icon-moon').classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.body.classList.remove('dark');
+                document.getElementById('theme-icon-sun').classList.add('hidden');
+                document.getElementById('theme-icon-moon').classList.remove('hidden');
+            }
+            lucide.createIcons();
+        }
+
+        function updateHeaderSubtitle() {
+            const startDay = getWeekStart();
+            const endDayIndex = (DAYS_OF_WEEK.indexOf(startDay) + 6) % 7;
+            const endDay = DAYS_OF_WEEK[endDayIndex];
+            const scaleDay = getScaleDay();
+            document.getElementById('header-subtitle').textContent =
+                `Weekly Plan • ${startDay} to ${endDay} • Scale check-in ${scaleDay}`;
+        }
+
+        function getBMIData() {
+            const stored = localStorage.getItem(BMI_DATA_KEY);
+            return stored ? JSON.parse(stored) : { height: '', weight: '', unit: 'metric' };
+        }
+
+        function saveBMIData(data) {
+            localStorage.setItem(BMI_DATA_KEY, JSON.stringify(data));
+        }
+
+        // Weight history functions
+        function getWeightHistory() {
+            const stored = localStorage.getItem(WEIGHT_HISTORY_KEY);
+            return stored ? JSON.parse(stored) : [];
+        }
+
+        function saveWeightHistory(history) {
+            localStorage.setItem(WEIGHT_HISTORY_KEY, JSON.stringify(history));
+        }
+
+        function addWeightEntry(weight) {
+            const history = getWeightHistory();
+            const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+            history.unshift({ date: today, weight: weight });
+            // Keep only last 20 entries
+            if (history.length > 20) history.pop();
+            saveWeightHistory(history);
+        }
+
+        function deleteWeightEntry(index) {
+            const history = getWeightHistory();
+            history.splice(index, 1);
+            saveWeightHistory(history);
+            renderTab('bmi');
+        }
+
+        // Warm-up toggle
+        function getWarmupVisible(workoutType) {
+            const stored = localStorage.getItem(WARMUP_VISIBLE_KEY);
+            const data = stored ? JSON.parse(stored) : {};
+            return data[workoutType] || false;
+        }
+
+        function toggleWarmup(workoutType) {
+            const stored = localStorage.getItem(WARMUP_VISIBLE_KEY);
+            const data = stored ? JSON.parse(stored) : {};
+            data[workoutType] = !data[workoutType];
+            localStorage.setItem(WARMUP_VISIBLE_KEY, JSON.stringify(data));
+            renderTab(workoutType);
+        }
+
+        // Helper function to get dynamic workout days based on week start
+        function getDynamicWorkoutDays() {
+            const startDay = getWeekStart();
+            const startIndex = DAYS_OF_WEEK.indexOf(startDay);
+
+            // Original pattern: Day 0=Full Body A, Day 1=Full Body B, Day 2=Rest, Day 3=Full Body A, Day 4=Full Body B+Scale, Day 5=Cardio, Day 6=Rest
+            const workoutADay1 = DAYS_OF_WEEK[startIndex];
+            const workoutBDay1 = DAYS_OF_WEEK[(startIndex + 1) % 7];
+            const workoutADay2 = DAYS_OF_WEEK[(startIndex + 3) % 7];
+            const workoutBDay2 = DAYS_OF_WEEK[(startIndex + 4) % 7];
+
+            return {
+                workoutA: [workoutADay1, workoutADay2],
+                workoutB: [workoutBDay1, workoutBDay2],
+                scaleDay: workoutBDay2
+            };
+        }
+
         function toggleExercise(name) {
             const progress = getProgress();
             progress[name] = !progress[name];
             saveProgress(progress);
-            
+
             // Re-render to update UI
             const activeTab = document.querySelector('.tab-active').id.replace('tab-', '');
             renderTab(activeTab);
         }
 
+        function adjustExerciseSetting(exerciseName, field, delta) {
+            const settings = getExerciseSettings();
+            if (!settings[exerciseName]) {
+                settings[exerciseName] = {};
+            }
+
+            // Get current value or default
+            const allExercises = [...workoutA, ...workoutB];
+            const exercise = allExercises.find(e => e.name === exerciseName);
+            const defaultValue = parseInt(exercise[field]) || 3;
+            const currentValue = settings[exerciseName][field] !== undefined
+                ? settings[exerciseName][field]
+                : defaultValue;
+
+            const newValue = Math.max(1, currentValue + delta);
+            settings[exerciseName][field] = newValue;
+            saveExerciseSettings(settings);
+
+            // Re-render
+            const activeTab = document.querySelector('.tab-active').id.replace('tab-', '');
+            renderTab(activeTab);
+        }
+
+        function resetExerciseSettings(exerciseName) {
+            const settings = getExerciseSettings();
+            delete settings[exerciseName];
+            saveExerciseSettings(settings);
+
+            const activeTab = document.querySelector('.tab-active').id.replace('tab-', '');
+            renderTab(activeTab);
+        }
+
         function resetDay() {
-            if(confirm("Are you sure you want to finish and reset for the next day?")) {
-                const progress = getProgress();
-                // We only clear the exercises currently in the active tab (or all if preferred).
-                // For simplicity, let's clear all since the user finishes the day.
+            if (confirm("Are you sure you want to finish and reset for the next day?")) {
                 localStorage.removeItem(STORAGE_KEY);
-                
+
                 // Re-render
                 const activeTab = document.querySelector('.tab-active').id.replace('tab-', '');
                 renderTab(activeTab);
@@ -102,7 +493,6 @@
                 sets: "3",
                 reps: "12",
                 muscles: "Quads, Glutes, Core",
-                // Updated to look for local file
                 image: "Goblet Squat.webp",
                 instructions: [
                     "Hold one dumbbell vertically against your chest with both hands cupping the top end.",
@@ -239,26 +629,55 @@
             }
         ];
 
-        const scheduleData = [
-            { day: "Sunday", title: "Full Body A", routine: [{type:'exercise', text:'Start Day! Main Workout A'}, {type:'cardio', text:'Walk 10-20 min'}] },
-            { day: "Monday", title: "Full Body B", routine: [{type:'exercise', text:'Main Workout B'}, {type:'cardio', text:'Walk 10-20 min'}] },
-            { day: "Tuesday", title: "Active Recovery", isRest: true, routine: [{type:'cardio', text:'Walk 20-30 min'}, {type:'cardio', text:'Light Stretching & Breathing'}] },
-            { day: "Wednesday", title: "Full Body A", routine: [{type:'exercise', text:'Main Workout A'}, {type:'cardio', text:'Walk 10-20 min'}] },
-            { day: "Thursday", title: "Full Body B + Scale", routine: [{type:'exercise', text:'Scale Check-in (Morning Fasted)'}, {type:'exercise', text:'Main Workout B'}, {type:'cardio', text:'Walk 10-20 min'}] },
-            { day: "Friday", title: "Cardio & Mobility", isRest: true, routine: [{type:'cardio', text:'Walk 30 min'}, {type:'cardio', text:'Mobility Routine 10 min'}] },
-            { day: "Saturday", title: "Full Rest", isRest: true, routine: [{type:'cardio', text:'Optional light walk'}] },
+        // Schedule patterns (position-based, not day-based)
+        const schedulePatterns = [
+            { position: 0, title: "Full Body A", routine: [{ type: 'exercise', text: 'Start Day! Main Workout A' }, { type: 'cardio', text: 'Walk 10-20 min' }] },
+            { position: 1, title: "Full Body B", routine: [{ type: 'exercise', text: 'Main Workout B' }, { type: 'cardio', text: 'Walk 10-20 min' }] },
+            { position: 2, title: "Active Recovery", isRest: true, routine: [{ type: 'cardio', text: 'Walk 20-30 min' }, { type: 'cardio', text: 'Light Stretching & Breathing' }] },
+            { position: 3, title: "Full Body A", routine: [{ type: 'exercise', text: 'Main Workout A' }, { type: 'cardio', text: 'Walk 10-20 min' }] },
+            { position: 4, title: "Full Body B + Scale", routine: [{ type: 'exercise', text: 'Scale Check-in (Morning Fasted)' }, { type: 'exercise', text: 'Main Workout B' }, { type: 'cardio', text: 'Walk 10-20 min' }] },
+            { position: 5, title: "Cardio & Mobility", isRest: true, routine: [{ type: 'cardio', text: 'Walk 30 min' }, { type: 'cardio', text: 'Mobility Routine 10 min' }] },
+            { position: 6, title: "Full Rest", isRest: true, routine: [{ type: 'cardio', text: 'Optional light walk' }] },
         ];
+
+        function getReorderedSchedule() {
+            const startDay = getWeekStart();
+            const startIndex = DAYS_OF_WEEK.indexOf(startDay);
+            const schedule = [];
+
+            for (let i = 0; i < 7; i++) {
+                const dayIndex = (startIndex + i) % 7;
+                const dayName = DAYS_OF_WEEK[dayIndex];
+                const pattern = schedulePatterns[i];
+                schedule.push({
+                    day: dayName,
+                    title: pattern.title,
+                    isRest: pattern.isRest || false,
+                    routine: pattern.routine
+                });
+            }
+            return schedule;
+        }
 
         // --- RENDER FUNCTIONS ---
 
         function renderExerciseCard(ex) {
             const progress = getProgress();
+            const settings = getExerciseSettings();
             const isCompleted = progress[ex.name] === true;
-            
-            const cardClass = isCompleted 
-                ? "bg-emerald-50 border-emerald-200" 
+
+            // Get current sets/reps (custom or default)
+            const defaultSets = parseInt(ex.sets) || 3;
+            const defaultReps = ex.reps;
+            const currentSets = settings[ex.name]?.sets !== undefined ? settings[ex.name].sets : defaultSets;
+            const currentReps = settings[ex.name]?.reps !== undefined ? settings[ex.name].reps : (parseInt(defaultReps) || defaultReps);
+
+            const hasCustomSettings = settings[ex.name] && (settings[ex.name].sets !== undefined || settings[ex.name].reps !== undefined);
+
+            const cardClass = isCompleted
+                ? "bg-emerald-50 border-emerald-200"
                 : "bg-white border-slate-200";
-                
+
             const headerClass = isCompleted
                 ? "bg-emerald-100 border-emerald-200"
                 : "bg-slate-50 border-slate-100";
@@ -282,29 +701,58 @@
                 </li>
             `).join('');
 
+            // Check if reps is a number (can be adjusted) or text like "30-45 sec"
+            const isRepsNumeric = !isNaN(parseInt(ex.reps)) && !ex.reps.includes('sec') && !ex.reps.includes('each');
+            const displayReps = isRepsNumeric ? currentReps : ex.reps;
+
             return `
             <div class="${cardClass} rounded-xl shadow-sm border overflow-hidden hover:shadow-md transition-all duration-300 mb-6">
-                <div class="${headerClass} p-4 border-b flex justify-between items-center">
-                    <div class="flex-1">
-                        <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
-                            <i data-lucide="dumbbell" class="w-5 h-5 text-blue-600"></i>
-                            ${ex.name}
-                        </h3>
-                        <p class="text-slate-500 text-sm mt-1">${ex.muscles}</p>
-                    </div>
-                    
-                    <div class="flex items-center gap-3">
-                        <div class="text-right hidden sm:block">
-                            <div class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-semibold">
-                                ${ex.sets} Sets
-                            </div>
-                            <div class="inline-block ml-1 bg-emerald-100 text-emerald-800 text-xs px-2 py-1 rounded-full font-semibold">
-                                ${ex.reps} Reps
-                            </div>
+                <div class="${headerClass} p-4 border-b">
+                    <div class="flex justify-between items-center mb-3">
+                        <div class="flex-1">
+                            <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
+                                <i data-lucide="dumbbell" class="w-5 h-5 text-blue-600"></i>
+                                ${ex.name}
+                            </h3>
+                            <p class="text-slate-500 text-sm mt-1">${ex.muscles}</p>
                         </div>
+                        
                         <button onclick="toggleExercise('${ex.name}')" class="${btnClass} w-10 h-10 rounded-full flex items-center justify-center shadow-sm check-anim" title="Mark as Complete">
                             <i data-lucide="${btnIcon}" class="w-6 h-6"></i>
                         </button>
+                    </div>
+                    
+                    <!-- Sets & Reps Controls -->
+                    <div class="flex flex-wrap gap-3 items-center">
+                        <!-- Sets Control -->
+                        <div class="flex items-center gap-2 bg-blue-50 rounded-lg px-3 py-2">
+                            <button onclick="adjustExerciseSetting('${ex.name}', 'sets', -1)" class="counter-btn w-7 h-7 rounded-full bg-blue-200 hover:bg-blue-300 text-blue-800 flex items-center justify-center font-bold text-lg">−</button>
+                            <div class="text-center min-w-[60px]">
+                                <span class="text-blue-800 font-bold text-lg">${currentSets}</span>
+                                <span class="text-blue-600 text-sm ml-1">Sets</span>
+                                ${currentSets !== defaultSets ? `<div class="text-xs text-blue-500">(Rec: ${defaultSets})</div>` : ''}
+                            </div>
+                            <button onclick="adjustExerciseSetting('${ex.name}', 'sets', 1)" class="counter-btn w-7 h-7 rounded-full bg-blue-200 hover:bg-blue-300 text-blue-800 flex items-center justify-center font-bold text-lg">+</button>
+                        </div>
+                        
+                        <!-- Reps Control -->
+                        <div class="flex items-center gap-2 bg-emerald-50 rounded-lg px-3 py-2">
+                            ${isRepsNumeric ? `
+                                <button onclick="adjustExerciseSetting('${ex.name}', 'reps', -1)" class="counter-btn w-7 h-7 rounded-full bg-emerald-200 hover:bg-emerald-300 text-emerald-800 flex items-center justify-center font-bold text-lg">−</button>
+                            ` : ''}
+                            <div class="text-center min-w-[60px]">
+                                <span class="text-emerald-800 font-bold text-lg">${displayReps}</span>
+                                <span class="text-emerald-600 text-sm ml-1">Reps</span>
+                                ${isRepsNumeric && currentReps !== parseInt(defaultReps) ? `<div class="text-xs text-emerald-500">(Rec: ${defaultReps})</div>` : ''}
+                            </div>
+                            ${isRepsNumeric ? `
+                                <button onclick="adjustExerciseSetting('${ex.name}', 'reps', 1)" class="counter-btn w-7 h-7 rounded-full bg-emerald-200 hover:bg-emerald-300 text-emerald-800 flex items-center justify-center font-bold text-lg">+</button>
+                            ` : ''}
+                        </div>
+                        
+                        ${hasCustomSettings ? `
+                            <button onclick="resetExerciseSettings('${ex.name}')" class="text-xs text-slate-500 hover:text-slate-700 underline">Reset to default</button>
+                        ` : ''}
                     </div>
                 </div>
                 
@@ -334,9 +782,9 @@
             const badgeClass = day.isRest ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600';
             const listItems = day.routine.map(item => `
                 <li class="text-sm text-slate-600 flex items-center gap-2">
-                    ${item.type === 'exercise' 
-                        ? '<div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div>' 
-                        : '<i data-lucide="activity" class="w-3 h-3 text-emerald-500"></i>'}
+                    ${item.type === 'exercise'
+                    ? '<div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div>'
+                    : '<i data-lucide="activity" class="w-3 h-3 text-emerald-500"></i>'}
                     ${item.text}
                 </li>
             `).join('');
@@ -356,11 +804,255 @@
             `;
         }
 
+        function renderBMICalculator() {
+            const bmiData = getBMIData();
+            const weightHistory = getWeightHistory();
+
+            return `
+            <div class="fade-in">
+                <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <i data-lucide="scale" class="w-5 h-5"></i>
+                    Weight Calculator
+                </h2>
+                
+                <div class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Unit System</label>
+                        <div class="flex gap-2">
+                            <button onclick="toggleBMIUnit('metric')" id="btn-metric" class="flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${bmiData.unit === 'metric' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}">
+                                Metric (kg/cm)
+                            </button>
+                            <button onclick="toggleBMIUnit('imperial')" id="btn-imperial" class="flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${bmiData.unit === 'imperial' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}">
+                                Imperial (lb/ft)
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">
+                                Height ${bmiData.unit === 'metric' ? '(cm)' : '(inches)'}
+                            </label>
+                            <input 
+                                type="number" 
+                                id="bmi-height" 
+                                value="${bmiData.height}"
+                                placeholder="${bmiData.unit === 'metric' ? 'e.g., 175' : 'e.g., 69'}"
+                                class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-lg"
+                            >
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">
+                                Weight ${bmiData.unit === 'metric' ? '(kg)' : '(lbs)'}
+                            </label>
+                            <input 
+                                type="number" 
+                                id="bmi-weight" 
+                                value="${bmiData.weight}"
+                                placeholder="${bmiData.unit === 'metric' ? 'e.g., 70' : 'e.g., 154'}"
+                                class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-lg"
+                            >
+                        </div>
+                    </div>
+                    
+                    <button onclick="calculateBMI()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2">
+                        <i data-lucide="calculator" class="w-5 h-5"></i>
+                        Calculate BMI & Save Weight
+                    </button>
+                </div>
+                
+                <div id="bmi-result" class="hidden">
+                    <!-- Result will be injected here -->
+                </div>
+                
+                <!-- Weight History Table -->
+                <div class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
+                    <h3 class="font-bold text-slate-800 flex items-center gap-2 mb-4">
+                        <i data-lucide="history" class="w-5 h-5 text-blue-600"></i>
+                        Your Weight Progress
+                    </h3>
+                    ${weightHistory.length > 0 ? `
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="border-b border-slate-200">
+                                        <th class="text-left py-2 px-3 font-semibold text-slate-600">Date</th>
+                                        <th class="text-left py-2 px-3 font-semibold text-slate-600">Weight (${bmiData.unit === 'metric' ? 'kg' : 'lbs'})</th>
+                                        <th class="text-right py-2 px-3 font-semibold text-slate-600">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${weightHistory.map((entry, idx) => `
+                                        <tr class="border-b border-slate-100 hover:bg-slate-50">
+                                            <td class="py-3 px-3 text-slate-700">${entry.date}</td>
+                                            <td class="py-3 px-3">
+                                                <span class="font-bold text-slate-800">${entry.weight}</span>
+                                                ${idx > 0 ? (() => {
+                    const diff = entry.weight - weightHistory[idx - 1].weight;
+                    if (diff > 0) return `<span class="ml-2 text-xs text-red-500">↑ +${diff.toFixed(1)}</span>`;
+                    if (diff < 0) return `<span class="ml-2 text-xs text-green-500">↓ ${diff.toFixed(1)}</span>`;
+                    return '';
+                })() : '<span class="ml-2 text-xs text-blue-500">First entry</span>'}
+                                            </td>
+                                            <td class="py-3 px-3 text-right">
+                                                <button onclick="deleteWeightEntry(${idx})" class="text-red-500 hover:text-red-700 text-xs">
+                                                    <i data-lucide="trash-2" class="w-4 h-4 inline"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                        ${weightHistory.length >= 2 ? `
+                            <div class="mt-4 p-3 bg-slate-50 rounded-lg">
+                                <p class="text-sm text-slate-600">
+                                    <span class="font-semibold">Total Change:</span> 
+                                    ${(() => {
+                            const firstWeight = weightHistory[weightHistory.length - 1].weight;
+                            const lastWeight = weightHistory[0].weight;
+                            const change = lastWeight - firstWeight;
+                            const color = change < 0 ? 'text-green-600' : change > 0 ? 'text-red-600' : 'text-slate-600';
+                            return `<span class="${color} font-bold">${change > 0 ? '+' : ''}${change.toFixed(1)} ${bmiData.unit === 'metric' ? 'kg' : 'lbs'}</span>`;
+                        })()}
+                                </p>
+                            </div>
+                        ` : ''}
+                    ` : `
+                        <div class="text-center py-8 text-slate-400">
+                            <i data-lucide="scale" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+                            <p>No weight entries yet</p>
+                            <p class="text-sm">Calculate your BMI to save your first entry</p>
+                        </div>
+                    `}
+                </div>
+                
+                <div class="bg-slate-800 text-slate-300 p-5 rounded-xl">
+                    <h3 class="text-white font-bold flex items-center gap-2 mb-3">
+                        <i data-lucide="info" class="w-4 h-4"></i>
+                        BMI Categories
+                    </h3>
+                    <div class="grid grid-cols-2 gap-3 text-sm">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-blue-400"></div>
+                            <span>Underweight: &lt; 18.5</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-emerald-400"></div>
+                            <span>Normal: 18.5 - 24.9</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                            <span>Overweight: 25 - 29.9</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                            <span>Obese: ≥ 30</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        function toggleBMIUnit(unit) {
+            const bmiData = getBMIData();
+            bmiData.unit = unit;
+            bmiData.height = '';
+            bmiData.weight = '';
+            saveBMIData(bmiData);
+            renderTab('bmi');
+        }
+
+        function calculateBMI() {
+            const bmiData = getBMIData();
+            const height = parseFloat(document.getElementById('bmi-height').value);
+            const weight = parseFloat(document.getElementById('bmi-weight').value);
+
+            if (!height || !weight || height <= 0 || weight <= 0) {
+                alert('Please enter valid height and weight values.');
+                return;
+            }
+
+            // Save the values
+            bmiData.height = height;
+            bmiData.weight = weight;
+            saveBMIData(bmiData);
+
+            // Add to weight history
+            addWeightEntry(weight);
+
+            let bmi;
+            if (bmiData.unit === 'metric') {
+                // BMI = weight(kg) / height(m)^2
+                const heightInMeters = height / 100;
+                bmi = weight / (heightInMeters * heightInMeters);
+            } else {
+                // BMI = (weight(lb) / height(in)^2) * 703
+                bmi = (weight / (height * height)) * 703;
+            }
+
+            bmi = Math.round(bmi * 10) / 10;
+
+            let category, recommendation, colorClass, icon;
+            if (bmi < 18.5) {
+                category = 'Underweight';
+                recommendation = 'You may need to gain some weight. Consider increasing your caloric intake with nutritious foods and consult a healthcare provider.';
+                colorClass = 'bmi-underweight';
+                icon = 'trending-up';
+            } else if (bmi < 25) {
+                category = 'Normal Weight';
+                recommendation = 'Great job! Your weight is in a healthy range. Maintain your current lifestyle with balanced nutrition and regular exercise.';
+                colorClass = 'bmi-normal';
+                icon = 'check-circle';
+            } else if (bmi < 30) {
+                category = 'Overweight';
+                recommendation = 'Consider losing some weight through a balanced diet and regular exercise. Small changes can make a big difference!';
+                colorClass = 'bmi-overweight';
+                icon = 'trending-down';
+            } else {
+                category = 'Obese';
+                recommendation = 'It is recommended to lose weight for better health. Please consult a healthcare provider for personalized guidance.';
+                colorClass = 'bmi-obese';
+                icon = 'alert-triangle';
+            }
+
+            const resultHtml = `
+                <div class="${colorClass} text-white rounded-xl p-6 mb-6 shadow-lg">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <p class="text-white/80 text-sm uppercase tracking-wider">Your BMI</p>
+                            <p class="text-5xl font-bold">${bmi}</p>
+                        </div>
+                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                            <i data-lucide="${icon}" class="w-8 h-8"></i>
+                        </div>
+                    </div>
+                    <div class="border-t border-white/20 pt-4">
+                        <p class="font-bold text-lg mb-2">${category}</p>
+                        <p class="text-white/90 text-sm">${recommendation}</p>
+                    </div>
+                </div>
+            `;
+
+            // Re-render the whole tab to update weight history, then show result
+            renderTab('bmi');
+
+            // After re-render, inject the result
+            setTimeout(() => {
+                document.getElementById('bmi-result').innerHTML = resultHtml;
+                document.getElementById('bmi-result').classList.remove('hidden');
+                lucide.createIcons();
+                // Scroll to result
+                document.getElementById('bmi-result').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+
         function renderTab(tabName) {
             const container = document.getElementById('app-content');
-            
+
             // Update Tab Styles
-            ['workoutA', 'workoutB', 'schedule'].forEach(t => {
+            ['workoutA', 'workoutB', 'schedule', 'bmi'].forEach(t => {
                 const btn = document.getElementById(`tab-${t}`);
                 if (t === tabName) {
                     btn.classList.add('tab-active', 'border-blue-600');
@@ -373,36 +1065,128 @@
 
             // Render Content
             let content = `<div class="fade-in">`;
-            
+
             if (tabName === 'workoutA') {
+                const days = getDynamicWorkoutDays();
+                const warmupVisible = getWarmupVisible('workoutA');
                 content += `
                     <div class="bg-blue-50 border border-blue-100 p-4 rounded-lg mb-6 flex gap-3">
                         <i data-lucide="calendar" class="w-5 h-5 text-blue-600 shrink-0 mt-0.5"></i>
                         <p class="text-sm text-blue-800">
-                            <strong>Schedule:</strong> Perform this routine on <span class="underline decoration-blue-400 decoration-2">Sunday</span> and <span class="underline decoration-blue-400 decoration-2">Wednesday</span>.
+                            <strong>Schedule:</strong> Perform this routine on <span class="underline decoration-blue-400 decoration-2">${days.workoutA[0]}</span> and <span class="underline decoration-blue-400 decoration-2">${days.workoutA[1]}</span>.
                         </p>
+                    </div>
+                    
+                    <!-- Dynamic Warm-up Button -->
+                    <div class="mb-6">
+                        <button onclick="toggleWarmup('workoutA')" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg transition-all flex items-center justify-center gap-3">
+                            <i data-lucide="${warmupVisible ? 'chevron-up' : 'flame'}" class="w-6 h-6"></i>
+                            ${warmupVisible ? 'Hide Warm-up Exercises' : 'Dynamic Warm-up '}
+                        </button>
+                        
+                        ${warmupVisible ? `
+                            <div class="mt-4 space-y-4">
+                                ${warmupExercises.map((ex, idx) => `
+                                    <div class="bg-orange-50 border border-orange-200 rounded-xl overflow-hidden">
+                                        <div class="p-4 bg-orange-100/50 border-b border-orange-200">
+                                            <h4 class="font-bold text-orange-800 flex items-center gap-2">
+                                                <span class="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-sm">${idx + 1}</span>
+                                                ${ex.name}
+                                                <span class="ml-auto text-sm font-normal text-orange-600">${ex.duration}</span>
+                                            </h4>
+                                        </div>
+                                        <div class="p-4">
+                                            <div class="w-full h-48 bg-orange-100 rounded-lg mb-3 overflow-hidden">
+                                                <img src="${ex.image}" alt="${ex.name}" class="w-full h-full object-contain">
+                                            </div>
+                                            <p class="text-sm text-orange-800">${ex.instructions}</p>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
                     </div>
                 `;
                 content += workoutA.map(renderExerciseCard).join('');
                 content += renderResetButton();
             } else if (tabName === 'workoutB') {
+                const days = getDynamicWorkoutDays();
+                const warmupVisible = getWarmupVisible('workoutB');
                 content += `
                     <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-lg mb-6 flex gap-3">
                         <i data-lucide="calendar" class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5"></i>
                         <div class="text-sm text-emerald-800">
-                            <p><strong>Schedule:</strong> Perform this routine on <span class="underline decoration-emerald-400 decoration-2">Monday</span> and <span class="underline decoration-emerald-400 decoration-2">Thursday</span>.</p>
-                            <p class="mt-1 text-xs opacity-90">*Thursday is also Scale Check-in day (morning, fasted).</p>
+                            <p><strong>Schedule:</strong> Perform this routine on <span class="underline decoration-emerald-400 decoration-2">${days.workoutB[0]}</span> and <span class="underline decoration-emerald-400 decoration-2">${days.workoutB[1]}</span>.</p>
+                            <p class="mt-1 text-xs opacity-90">*${days.scaleDay} is also Scale Check-in day (morning, fasted).</p>
                         </div>
+                    </div>
+                    
+                    <!-- Dynamic Warm-up Button -->
+                    <div class="mb-6">
+                        <button onclick="toggleWarmup('workoutB')" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg transition-all flex items-center justify-center gap-3">
+                            <i data-lucide="${warmupVisible ? 'chevron-up' : 'flame'}" class="w-6 h-6"></i>
+                            ${warmupVisible ? 'Hide Warm-up Exercises' : 'Dynamic Warm-up (Tap to Start)'}
+                        </button>
+                        
+                        ${warmupVisible ? `
+                            <div class="mt-4 space-y-4">
+                                ${warmupExercises.map((ex, idx) => `
+                                    <div class="bg-orange-50 border border-orange-200 rounded-xl overflow-hidden">
+                                        <div class="p-4 bg-orange-100/50 border-b border-orange-200">
+                                            <h4 class="font-bold text-orange-800 flex items-center gap-2">
+                                                <span class="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-sm">${idx + 1}</span>
+                                                ${ex.name}
+                                                <span class="ml-auto text-sm font-normal text-orange-600">${ex.duration}</span>
+                                            </h4>
+                                        </div>
+                                        <div class="p-4">
+                                            <div class="w-full h-48 bg-orange-100 rounded-lg mb-3 overflow-hidden">
+                                                <img src="${ex.image}" alt="${ex.name}" class="w-full h-full object-contain">
+                                            </div>
+                                            <p class="text-sm text-orange-800">${ex.instructions}</p>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
                     </div>
                 `;
                 content += workoutB.map(renderExerciseCard).join('');
                 content += renderResetButton();
             } else if (tabName === 'schedule') {
+                const scheduleData = getReorderedSchedule();
                 content += `
                     <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
                         <i data-lucide="clock" class="w-5 h-5"></i>
                         Weekly Overview
                     </h2>
+                    
+                    <!-- Week Start Day Selector -->
+                    <div class="bg-white rounded-xl border border-slate-200 p-4 mb-4">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">
+                            <i data-lucide="calendar" class="w-4 h-4 inline-block mr-1"></i>
+                            Week Starts On
+                        </label>
+                        <select onchange="changeWeekStart(this.value)" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white">
+                            ${DAYS_OF_WEEK.map(day => `
+                                <option value="${day}" ${getWeekStart() === day ? 'selected' : ''}>${day}</option>
+                            `).join('')}
+                        </select>
+                    </div>
+                    
+                    <!-- Scale Check-in Day Selector -->
+                    <div class="bg-white rounded-xl border border-slate-200 p-4 mb-6">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">
+                            <i data-lucide="scale" class="w-4 h-4 inline-block mr-1"></i>
+                            Scale Check-in Day
+                        </label>
+                        <select onchange="changeScaleDay(this.value)" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white">
+                            ${DAYS_OF_WEEK.map(day => `
+                                <option value="${day}" ${getScaleDay() === day ? 'selected' : ''}>${day}</option>
+                            `).join('')}
+                        </select>
+                    </div>
+                    
                     <div class="grid gap-2">
                         ${scheduleData.map(renderScheduleDay).join('')}
                     </div>
@@ -418,13 +1202,25 @@
                         </ul>
                     </div>
                 `;
+            } else if (tabName === 'bmi') {
+                content = renderBMICalculator();
             }
-            
+
             content += `</div>`;
             container.innerHTML = content;
-            
+
             // Re-initialize icons for new content
             lucide.createIcons();
+        }
+
+        function changeWeekStart(day) {
+            setWeekStart(day);
+            renderTab('schedule');
+        }
+
+        function changeScaleDay(day) {
+            setScaleDay(day);
+            renderTab('schedule');
         }
 
         function renderResetButton() {
@@ -441,9 +1237,13 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
+            // Apply saved dark mode preference
+            applyDarkMode(getDarkMode());
+            updateHeaderSubtitle();
             renderTab('workoutA');
         });
 
     </script>
 </body>
+
 </html>
