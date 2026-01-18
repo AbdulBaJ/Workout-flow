@@ -4,7 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Journey Workout Project</title>
+    <title>Journey Workout</title>
+
+    <!-- Google Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,7 +19,7 @@
 
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         .fade-in {
@@ -45,6 +50,12 @@
 
         .tab-inactive:hover {
             color: #334155;
+        }
+
+        /* CrossFit Theme Colors for Tab */
+        .tab-active-crossfit {
+            border-bottom-color: #ef4444;
+            color: #ef4444;
         }
 
         /* Checkbox animation */
@@ -172,6 +183,10 @@
             background-color: rgba(16, 185, 129, 0.1);
         }
 
+        .dark .bg-red-50 {
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+
         .dark .bg-orange-50 {
             background-color: rgba(249, 115, 22, 0.1);
         }
@@ -186,6 +201,10 @@
 
         .dark .border-emerald-100 {
             border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .dark .border-red-200 {
+            border-color: rgba(239, 68, 68, 0.3);
         }
 
         .dark .border-orange-200 {
@@ -203,16 +222,16 @@
     </style>
 </head>
 
-<body class="bg-slate-50 min-h-screen pb-12">
+<body class="bg-slate-50 min-h-screen pb-20">
 
     <!-- Header -->
     <div class="bg-slate-900 text-white p-6 shadow-lg">
         <div class="max-w-3xl mx-auto">
             <div class="flex justify-between items-start">
                 <div>
-                    <h1 className="text-2xl font-bold flex items-center gap-3">
+                    <h1 class="text-2xl font-bold flex items-center gap-3">
                         <i data-lucide="activity" class="inline-block w-6 h-6 text-blue-400 mr-2"></i>
-                        Journey Workout Project
+                        Journey Workout
                     </h1>
                     <p class="text-slate-400 mt-2 text-sm" id="header-subtitle">
                         Weekly Plan • Scale check-in Thursday
@@ -231,13 +250,10 @@
     <!-- Navigation -->
     <div class="sticky top-0 bg-white border-b border-slate-200 z-10 shadow-sm overflow-x-auto">
         <div class="max-w-3xl mx-auto flex">
-            <button onclick="renderTab('workoutA')" id="tab-workoutA"
+            <button onclick="openWorkoutSelector()" id="tab-workouts"
                 class="flex-1 py-4 px-2 text-sm font-bold border-b-2 transition-colors whitespace-nowrap tab-active">
-                Full Body A
-            </button>
-            <button onclick="renderTab('workoutB')" id="tab-workoutB"
-                class="flex-1 py-4 px-2 text-sm font-bold border-b-2 transition-colors whitespace-nowrap tab-inactive">
-                Full Body B
+                <span id="tab-workout-label">Dumbbell Full Body</span> <i data-lucide="chevron-down"
+                    class="w-3 h-3 inline ml-1"></i>
             </button>
             <button onclick="renderTab('schedule')" id="tab-schedule"
                 class="flex-1 py-4 px-2 text-sm font-bold border-b-2 transition-colors whitespace-nowrap tab-inactive">
@@ -255,6 +271,63 @@
         <!-- Content injected via JS -->
     </div>
 
+    <!-- Workout Selector Modal -->
+    <div id="workout-selector-modal"
+        class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4 fade-in">
+        <div class="bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl transform transition-all scale-100">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-slate-800">Select Workout</h3>
+                    <button onclick="closeWorkoutSelector()" class="text-slate-400 hover:text-slate-600">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+
+                <div class="space-y-4">
+                    <button onclick="selectWorkout('workoutA')"
+                        class="w-full bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl p-4 text-left group transition-all">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-blue-900 group-hover:text-blue-700">Full Body A</h4>
+                                <p class="text-sm text-blue-600/80">Squats, Presses, Rows</p>
+                            </div>
+                            <i data-lucide="arrow-right"
+                                class="w-5 h-5 text-blue-300 group-hover:text-blue-600 transition-colors"></i>
+                        </div>
+                    </button>
+
+                    <button onclick="selectWorkout('workoutB')"
+                        class="w-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl p-4 text-left group transition-all">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-emerald-900 group-hover:text-emerald-700">Full Body B</h4>
+                                <p class="text-sm text-emerald-600/80">Lunges, Chest Press, Arms</p>
+                            </div>
+                            <i data-lucide="arrow-right"
+                                class="w-5 h-5 text-emerald-300 group-hover:text-emerald-600 transition-colors"></i>
+                        </div>
+                    </button>
+
+                    <!-- NEW CROSSFIT SECTION -->
+                    <button onclick="selectWorkout('crossfit')"
+                        class="w-full bg-red-50 hover:bg-red-100 border border-red-200 rounded-xl p-4 text-left group transition-all">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-red-900 group-hover:text-red-700">CrossFit WOD</h4>
+                                <p class="text-sm text-red-600/80">Thrusters, Burpees, High Intensity</p>
+                            </div>
+                            <i data-lucide="flame"
+                                class="w-5 h-5 text-red-300 group-hover:text-red-600 transition-colors"></i>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="bg-slate-50 p-4 border-t border-slate-100 text-center">
+                <p class="text-xs text-slate-500">Choose your routine for today</p>
+            </div>
+        </div>
+    </div>
+
     <script>
         // --- STATE MANAGEMENT ---
         const STORAGE_KEY = 'journey_workout_progress';
@@ -265,6 +338,7 @@
         const WARMUP_VISIBLE_KEY = 'journey_warmup_visible';
         const DARK_MODE_KEY = 'journey_dark_mode';
         const SCALE_DAY_KEY = 'journey_scale_day';
+        const LAST_TAB_KEY = 'journey_last_tab'; // Store which workout was last open
 
         const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -274,7 +348,7 @@
                 name: "Arm Circles",
                 duration: "30-60 sec",
                 image: "Arm Circles.webp",
-                instructions: "Start with small forward arm circles, gradually increasing size for 15-30 seconds, then reverse for another 15-30 seconds. Follow with cross-body arm swings, alternating sides, for about 15-30 seconds to loosen the chest and shoulders before increasing intensity to full rotations."
+                instructions: "Start with small forward arm circles, gradually increasing size for 15-30 seconds, then reverse. Follow with cross-body arm swings to loosen the chest and shoulders."
             },
             {
                 name: "Leg Swings",
@@ -286,7 +360,7 @@
                 name: "Torso Twists",
                 duration: "30 sec",
                 image: "Torse Twists.webp",
-                instructions: "Stand tall with your feet shoulder width apart. Place your hands on your hips or hold them at your side with a 90 degree bend at the elbow. Twist from side to side by rotating your upper body from the hips, bringing the head around and pivoting on the feet."
+                instructions: "Stand tall with feet shoulder width apart. Twist from side to side by rotating your upper body from the hips, bringing the head around and pivoting on the feet."
             }
         ];
 
@@ -440,8 +514,9 @@
             saveProgress(progress);
 
             // Re-render to update UI
-            const activeTab = document.querySelector('.tab-active').id.replace('tab-', '');
-            renderTab(activeTab);
+            // We need to know which tab is active to re-render correctly
+            const currentTab = localStorage.getItem(LAST_TAB_KEY) || 'workoutA';
+            renderTab(currentTab);
         }
 
         function adjustExerciseSetting(exerciseName, field, delta) {
@@ -451,9 +526,17 @@
             }
 
             // Get current value or default
-            const allExercises = [...workoutA, ...workoutB];
+            const allExercises = [...workoutA, ...workoutB, ...workoutCrossFit];
             const exercise = allExercises.find(e => e.name === exerciseName);
-            const defaultValue = parseInt(exercise[field]) || 3;
+
+            // Handle "Rounds" for CrossFit
+            let defaultValue = 3;
+            if (exercise.sets.toLowerCase().includes('round')) {
+                defaultValue = parseInt(exercise.sets) || 3;
+            } else {
+                defaultValue = parseInt(exercise.sets) || 3;
+            }
+
             const currentValue = settings[exerciseName][field] !== undefined
                 ? settings[exerciseName][field]
                 : defaultValue;
@@ -463,8 +546,8 @@
             saveExerciseSettings(settings);
 
             // Re-render
-            const activeTab = document.querySelector('.tab-active').id.replace('tab-', '');
-            renderTab(activeTab);
+            const currentTab = localStorage.getItem(LAST_TAB_KEY) || 'workoutA';
+            renderTab(currentTab);
         }
 
         function resetExerciseSettings(exerciseName) {
@@ -472,17 +555,15 @@
             delete settings[exerciseName];
             saveExerciseSettings(settings);
 
-            const activeTab = document.querySelector('.tab-active').id.replace('tab-', '');
-            renderTab(activeTab);
+            const currentTab = localStorage.getItem(LAST_TAB_KEY) || 'workoutA';
+            renderTab(currentTab);
         }
 
         function resetDay() {
             if (confirm("Are you sure you want to finish and reset for the next day?")) {
                 localStorage.removeItem(STORAGE_KEY);
-
-                // Re-render
-                const activeTab = document.querySelector('.tab-active').id.replace('tab-', '');
-                renderTab(activeTab);
+                const currentTab = localStorage.getItem(LAST_TAB_KEY) || 'workoutA';
+                renderTab(currentTab);
             }
         }
 
@@ -629,6 +710,79 @@
             }
         ];
 
+        // --- CROSSFIT DATA ---
+        const workoutCrossFit = [
+            {
+                name: "Dumbbell Thrusters",
+                sets: "3 Rounds",
+                reps: "15",
+                muscles: "Full Body, Cardio",
+                image: "Dumbbell Thrusters.webp",
+                instructions: [
+                    "Hold dumbbells at shoulder height, palms facing in.",
+                    "Perform a full squat, keeping chest up.",
+                    "As you stand up explosively, use the momentum to press the dumbbells overhead.",
+                    "Lower weights back to shoulders and immediately descend into the next squat.",
+                    "This is one fluid motion."
+                ]
+            },
+            {
+                name: "Burpees",
+                sets: "3 Rounds",
+                reps: "10",
+                muscles: "Full Body, Cardio",
+                image: "Burpees.webp",
+                instructions: [
+                    "Start standing, then squat down and place hands on floor.",
+                    "Jump feet back into a push-up position.",
+                    "Lower chest to floor, then push up.",
+                    "Jump feet back to hands.",
+                    "Jump explosively into the air, clapping hands overhead."
+                ]
+            },
+            {
+                name: "Kettlebell/DB Swings",
+                sets: "3 Rounds",
+                reps: "20",
+                muscles: "Hips, Glutes, Hamstrings",
+                image: "Kettlebell DB Swings.webp",
+                instructions: [
+                    "Stand with feet wider than shoulder-width, holding weight with both hands.",
+                    "Hinge at hips, hiking the weight back between legs.",
+                    "Explosively snap hips forward to swing weight up to chest height.",
+                    "Control the swing back down between legs.",
+                    "Use your hips, not your arms, to move the weight."
+                ]
+            },
+            {
+                name: "Alternating Jump Lunges",
+                sets: "3 Rounds",
+                reps: "20 (Total)",
+                muscles: "Legs, Glutes, Cardio",
+                image: "Alternating Jump Lunges.webp",
+                instructions: [
+                    "Start in a lunge position with knees at 90 degrees.",
+                    "Jump explosively into the air, switching legs mid-air.",
+                    "Land softly in a lunge with the opposite leg forward.",
+                    "Keep your chest up and core tight throughout.",
+                    "If too difficult, perform alternating reverse lunges quickly."
+                ]
+            },
+            {
+                name: "Butterfly Sit-ups",
+                sets: "3 Rounds",
+                reps: "20",
+                muscles: "Abs, Core",
+                image: "Butterfly Sit-ups.webp",
+                instructions: [
+                    "Sit with soles of feet together, knees out (butterfly position).",
+                    "Lie back until hands touch floor behind head.",
+                    "Sit all the way up until hands touch floor in front of toes.",
+                    "Keep the motion fluid."
+                ]
+            }
+        ];
+
         // Schedule patterns (position-based, not day-based)
         const schedulePatterns = [
             { position: 0, title: "Full Body A", routine: [{ type: 'exercise', text: 'Start Day! Main Workout A' }, { type: 'cardio', text: 'Walk 10-20 min' }] },
@@ -659,6 +813,27 @@
             return schedule;
         }
 
+        // --- MODAL FUNCTIONS ---
+        function openWorkoutSelector() {
+            document.getElementById('workout-selector-modal').classList.remove('hidden');
+        }
+
+        function closeWorkoutSelector() {
+            document.getElementById('workout-selector-modal').classList.add('hidden');
+        }
+
+        function selectWorkout(type) {
+            renderTab(type);
+            closeWorkoutSelector();
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('workout-selector-modal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeWorkoutSelector();
+            }
+        });
+
         // --- RENDER FUNCTIONS ---
 
         function renderExerciseCard(ex) {
@@ -667,7 +842,17 @@
             const isCompleted = progress[ex.name] === true;
 
             // Get current sets/reps (custom or default)
-            const defaultSets = parseInt(ex.sets) || 3;
+            // Handle "3 Rounds" vs "3" sets logic
+            let defaultSets = 3;
+            let setsLabel = "Sets";
+
+            if (ex.sets.toString().includes("Round")) {
+                defaultSets = parseInt(ex.sets);
+                setsLabel = "Rounds";
+            } else {
+                defaultSets = parseInt(ex.sets) || 3;
+            }
+
             const defaultReps = ex.reps;
             const currentSets = settings[ex.name]?.sets !== undefined ? settings[ex.name].sets : defaultSets;
             const currentReps = settings[ex.name]?.reps !== undefined ? settings[ex.name].reps : (parseInt(defaultReps) || defaultReps);
@@ -690,7 +875,7 @@
 
             const imageHtml = ex.image ? `
                 <div class="w-full h-64 ${isCompleted ? 'bg-emerald-50/50' : 'bg-slate-100'} flex items-center justify-center overflow-hidden border-b ${isCompleted ? 'border-emerald-100' : 'border-slate-100'}">
-                    <img src="${ex.image}" alt="${ex.name}" class="w-full h-full object-contain p-2">
+                    <img src="${ex.image}" alt="${ex.name}" onerror="this.src='https://placehold.co/400x300/e2e8f0/64748b?text=${ex.name.replace(/ /g, '+')}'" class="w-full h-full object-contain p-2">
                 </div>
             ` : '';
 
@@ -729,7 +914,7 @@
                             <button onclick="adjustExerciseSetting('${ex.name}', 'sets', -1)" class="counter-btn w-7 h-7 rounded-full bg-blue-200 hover:bg-blue-300 text-blue-800 flex items-center justify-center font-bold text-lg">−</button>
                             <div class="text-center min-w-[60px]">
                                 <span class="text-blue-800 font-bold text-lg">${currentSets}</span>
-                                <span class="text-blue-600 text-sm ml-1">Sets</span>
+                                <span class="text-blue-600 text-sm ml-1">${setsLabel}</span>
                                 ${currentSets !== defaultSets ? `<div class="text-xs text-blue-500">(Rec: ${defaultSets})</div>` : ''}
                             </div>
                             <button onclick="adjustExerciseSetting('${ex.name}', 'sets', 1)" class="counter-btn w-7 h-7 rounded-full bg-blue-200 hover:bg-blue-300 text-blue-800 flex items-center justify-center font-bold text-lg">+</button>
@@ -842,408 +1027,4 @@
                             >
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">
-                                Weight ${bmiData.unit === 'metric' ? '(kg)' : '(lbs)'}
-                            </label>
-                            <input 
-                                type="number" 
-                                id="bmi-weight" 
-                                value="${bmiData.weight}"
-                                placeholder="${bmiData.unit === 'metric' ? 'e.g., 70' : 'e.g., 154'}"
-                                class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-lg"
-                            >
-                        </div>
-                    </div>
-                    
-                    <button onclick="calculateBMI()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2">
-                        <i data-lucide="calculator" class="w-5 h-5"></i>
-                        Calculate BMI & Save Weight
-                    </button>
-                </div>
-                
-                <div id="bmi-result" class="hidden">
-                    <!-- Result will be injected here -->
-                </div>
-                
-                <!-- Weight History Table -->
-                <div class="bg-white rounded-xl border border-slate-200 p-6 mb-6">
-                    <h3 class="font-bold text-slate-800 flex items-center gap-2 mb-4">
-                        <i data-lucide="history" class="w-5 h-5 text-blue-600"></i>
-                        Your Weight Progress
-                    </h3>
-                    ${weightHistory.length > 0 ? `
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
-                                <thead>
-                                    <tr class="border-b border-slate-200">
-                                        <th class="text-left py-2 px-3 font-semibold text-slate-600">Date</th>
-                                        <th class="text-left py-2 px-3 font-semibold text-slate-600">Weight (${bmiData.unit === 'metric' ? 'kg' : 'lbs'})</th>
-                                        <th class="text-right py-2 px-3 font-semibold text-slate-600">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${weightHistory.map((entry, idx) => `
-                                        <tr class="border-b border-slate-100 hover:bg-slate-50">
-                                            <td class="py-3 px-3 text-slate-700">${entry.date}</td>
-                                            <td class="py-3 px-3">
-                                                <span class="font-bold text-slate-800">${entry.weight}</span>
-                                                ${idx > 0 ? (() => {
-                    const diff = entry.weight - weightHistory[idx - 1].weight;
-                    if (diff > 0) return `<span class="ml-2 text-xs text-red-500">↑ +${diff.toFixed(1)}</span>`;
-                    if (diff < 0) return `<span class="ml-2 text-xs text-green-500">↓ ${diff.toFixed(1)}</span>`;
-                    return '';
-                })() : '<span class="ml-2 text-xs text-blue-500">First entry</span>'}
-                                            </td>
-                                            <td class="py-3 px-3 text-right">
-                                                <button onclick="deleteWeightEntry(${idx})" class="text-red-500 hover:text-red-700 text-xs">
-                                                    <i data-lucide="trash-2" class="w-4 h-4 inline"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                        ${weightHistory.length >= 2 ? `
-                            <div class="mt-4 p-3 bg-slate-50 rounded-lg">
-                                <p class="text-sm text-slate-600">
-                                    <span class="font-semibold">Total Change:</span> 
-                                    ${(() => {
-                            const firstWeight = weightHistory[weightHistory.length - 1].weight;
-                            const lastWeight = weightHistory[0].weight;
-                            const change = lastWeight - firstWeight;
-                            const color = change < 0 ? 'text-green-600' : change > 0 ? 'text-red-600' : 'text-slate-600';
-                            return `<span class="${color} font-bold">${change > 0 ? '+' : ''}${change.toFixed(1)} ${bmiData.unit === 'metric' ? 'kg' : 'lbs'}</span>`;
-                        })()}
-                                </p>
-                            </div>
-                        ` : ''}
-                    ` : `
-                        <div class="text-center py-8 text-slate-400">
-                            <i data-lucide="scale" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
-                            <p>No weight entries yet</p>
-                            <p class="text-sm">Calculate your BMI to save your first entry</p>
-                        </div>
-                    `}
-                </div>
-                
-                <div class="bg-slate-800 text-slate-300 p-5 rounded-xl">
-                    <h3 class="text-white font-bold flex items-center gap-2 mb-3">
-                        <i data-lucide="info" class="w-4 h-4"></i>
-                        BMI Categories
-                    </h3>
-                    <div class="grid grid-cols-2 gap-3 text-sm">
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-blue-400"></div>
-                            <span>Underweight: &lt; 18.5</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-emerald-400"></div>
-                            <span>Normal: 18.5 - 24.9</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
-                            <span>Overweight: 25 - 29.9</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-red-400"></div>
-                            <span>Obese: ≥ 30</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            `;
-        }
-
-        function toggleBMIUnit(unit) {
-            const bmiData = getBMIData();
-            bmiData.unit = unit;
-            bmiData.height = '';
-            bmiData.weight = '';
-            saveBMIData(bmiData);
-            renderTab('bmi');
-        }
-
-        function calculateBMI() {
-            const bmiData = getBMIData();
-            const height = parseFloat(document.getElementById('bmi-height').value);
-            const weight = parseFloat(document.getElementById('bmi-weight').value);
-
-            if (!height || !weight || height <= 0 || weight <= 0) {
-                alert('Please enter valid height and weight values.');
-                return;
-            }
-
-            // Save the values
-            bmiData.height = height;
-            bmiData.weight = weight;
-            saveBMIData(bmiData);
-
-            // Add to weight history
-            addWeightEntry(weight);
-
-            let bmi;
-            if (bmiData.unit === 'metric') {
-                // BMI = weight(kg) / height(m)^2
-                const heightInMeters = height / 100;
-                bmi = weight / (heightInMeters * heightInMeters);
-            } else {
-                // BMI = (weight(lb) / height(in)^2) * 703
-                bmi = (weight / (height * height)) * 703;
-            }
-
-            bmi = Math.round(bmi * 10) / 10;
-
-            let category, recommendation, colorClass, icon;
-            if (bmi < 18.5) {
-                category = 'Underweight';
-                recommendation = 'You may need to gain some weight. Consider increasing your caloric intake with nutritious foods and consult a healthcare provider.';
-                colorClass = 'bmi-underweight';
-                icon = 'trending-up';
-            } else if (bmi < 25) {
-                category = 'Normal Weight';
-                recommendation = 'Great job! Your weight is in a healthy range. Maintain your current lifestyle with balanced nutrition and regular exercise.';
-                colorClass = 'bmi-normal';
-                icon = 'check-circle';
-            } else if (bmi < 30) {
-                category = 'Overweight';
-                recommendation = 'Consider losing some weight through a balanced diet and regular exercise. Small changes can make a big difference!';
-                colorClass = 'bmi-overweight';
-                icon = 'trending-down';
-            } else {
-                category = 'Obese';
-                recommendation = 'It is recommended to lose weight for better health. Please consult a healthcare provider for personalized guidance.';
-                colorClass = 'bmi-obese';
-                icon = 'alert-triangle';
-            }
-
-            const resultHtml = `
-                <div class="${colorClass} text-white rounded-xl p-6 mb-6 shadow-lg">
-                    <div class="flex items-center justify-between mb-4">
-                        <div>
-                            <p class="text-white/80 text-sm uppercase tracking-wider">Your BMI</p>
-                            <p class="text-5xl font-bold">${bmi}</p>
-                        </div>
-                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-                            <i data-lucide="${icon}" class="w-8 h-8"></i>
-                        </div>
-                    </div>
-                    <div class="border-t border-white/20 pt-4">
-                        <p class="font-bold text-lg mb-2">${category}</p>
-                        <p class="text-white/90 text-sm">${recommendation}</p>
-                    </div>
-                </div>
-            `;
-
-            // Re-render the whole tab to update weight history, then show result
-            renderTab('bmi');
-
-            // After re-render, inject the result
-            setTimeout(() => {
-                document.getElementById('bmi-result').innerHTML = resultHtml;
-                document.getElementById('bmi-result').classList.remove('hidden');
-                lucide.createIcons();
-                // Scroll to result
-                document.getElementById('bmi-result').scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 100);
-        }
-
-        function renderTab(tabName) {
-            const container = document.getElementById('app-content');
-
-            // Update Tab Styles
-            ['workoutA', 'workoutB', 'schedule', 'bmi'].forEach(t => {
-                const btn = document.getElementById(`tab-${t}`);
-                if (t === tabName) {
-                    btn.classList.add('tab-active', 'border-blue-600');
-                    btn.classList.remove('tab-inactive', 'border-transparent');
-                } else {
-                    btn.classList.remove('tab-active', 'border-blue-600');
-                    btn.classList.add('tab-inactive', 'border-transparent');
-                }
-            });
-
-            // Render Content
-            let content = `<div class="fade-in">`;
-
-            if (tabName === 'workoutA') {
-                const days = getDynamicWorkoutDays();
-                const warmupVisible = getWarmupVisible('workoutA');
-                content += `
-                    <div class="bg-blue-50 border border-blue-100 p-4 rounded-lg mb-6 flex gap-3">
-                        <i data-lucide="calendar" class="w-5 h-5 text-blue-600 shrink-0 mt-0.5"></i>
-                        <p class="text-sm text-blue-800">
-                            <strong>Schedule:</strong> Perform this routine on <span class="underline decoration-blue-400 decoration-2">${days.workoutA[0]}</span> and <span class="underline decoration-blue-400 decoration-2">${days.workoutA[1]}</span>.
-                        </p>
-                    </div>
-                    
-                    <!-- Dynamic Warm-up Button -->
-                    <div class="mb-6">
-                        <button onclick="toggleWarmup('workoutA')" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg transition-all flex items-center justify-center gap-3">
-                            <i data-lucide="${warmupVisible ? 'chevron-up' : 'flame'}" class="w-6 h-6"></i>
-                            ${warmupVisible ? 'Hide Warm-up Exercises' : 'Dynamic Warm-up '}
-                        </button>
-                        
-                        ${warmupVisible ? `
-                            <div class="mt-4 space-y-4">
-                                ${warmupExercises.map((ex, idx) => `
-                                    <div class="bg-orange-50 border border-orange-200 rounded-xl overflow-hidden">
-                                        <div class="p-4 bg-orange-100/50 border-b border-orange-200">
-                                            <h4 class="font-bold text-orange-800 flex items-center gap-2">
-                                                <span class="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-sm">${idx + 1}</span>
-                                                ${ex.name}
-                                                <span class="ml-auto text-sm font-normal text-orange-600">${ex.duration}</span>
-                                            </h4>
-                                        </div>
-                                        <div class="p-4">
-                                            <div class="w-full h-48 bg-orange-100 rounded-lg mb-3 overflow-hidden">
-                                                <img src="${ex.image}" alt="${ex.name}" class="w-full h-full object-contain">
-                                            </div>
-                                            <p class="text-sm text-orange-800">${ex.instructions}</p>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
-                content += workoutA.map(renderExerciseCard).join('');
-                content += renderResetButton();
-            } else if (tabName === 'workoutB') {
-                const days = getDynamicWorkoutDays();
-                const warmupVisible = getWarmupVisible('workoutB');
-                content += `
-                    <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-lg mb-6 flex gap-3">
-                        <i data-lucide="calendar" class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5"></i>
-                        <div class="text-sm text-emerald-800">
-                            <p><strong>Schedule:</strong> Perform this routine on <span class="underline decoration-emerald-400 decoration-2">${days.workoutB[0]}</span> and <span class="underline decoration-emerald-400 decoration-2">${days.workoutB[1]}</span>.</p>
-                            <p class="mt-1 text-xs opacity-90">*${days.scaleDay} is also Scale Check-in day (morning, fasted).</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Dynamic Warm-up Button -->
-                    <div class="mb-6">
-                        <button onclick="toggleWarmup('workoutB')" class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg transition-all flex items-center justify-center gap-3">
-                            <i data-lucide="${warmupVisible ? 'chevron-up' : 'flame'}" class="w-6 h-6"></i>
-                            ${warmupVisible ? 'Hide Warm-up Exercises' : 'Dynamic Warm-up (Tap to Start)'}
-                        </button>
-                        
-                        ${warmupVisible ? `
-                            <div class="mt-4 space-y-4">
-                                ${warmupExercises.map((ex, idx) => `
-                                    <div class="bg-orange-50 border border-orange-200 rounded-xl overflow-hidden">
-                                        <div class="p-4 bg-orange-100/50 border-b border-orange-200">
-                                            <h4 class="font-bold text-orange-800 flex items-center gap-2">
-                                                <span class="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-sm">${idx + 1}</span>
-                                                ${ex.name}
-                                                <span class="ml-auto text-sm font-normal text-orange-600">${ex.duration}</span>
-                                            </h4>
-                                        </div>
-                                        <div class="p-4">
-                                            <div class="w-full h-48 bg-orange-100 rounded-lg mb-3 overflow-hidden">
-                                                <img src="${ex.image}" alt="${ex.name}" class="w-full h-full object-contain">
-                                            </div>
-                                            <p class="text-sm text-orange-800">${ex.instructions}</p>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
-                content += workoutB.map(renderExerciseCard).join('');
-                content += renderResetButton();
-            } else if (tabName === 'schedule') {
-                const scheduleData = getReorderedSchedule();
-                content += `
-                    <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-                        <i data-lucide="clock" class="w-5 h-5"></i>
-                        Weekly Overview
-                    </h2>
-                    
-                    <!-- Week Start Day Selector -->
-                    <div class="bg-white rounded-xl border border-slate-200 p-4 mb-4">
-                        <label class="block text-sm font-medium text-slate-700 mb-2">
-                            <i data-lucide="calendar" class="w-4 h-4 inline-block mr-1"></i>
-                            Week Starts On
-                        </label>
-                        <select onchange="changeWeekStart(this.value)" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white">
-                            ${DAYS_OF_WEEK.map(day => `
-                                <option value="${day}" ${getWeekStart() === day ? 'selected' : ''}>${day}</option>
-                            `).join('')}
-                        </select>
-                    </div>
-                    
-                    <!-- Scale Check-in Day Selector -->
-                    <div class="bg-white rounded-xl border border-slate-200 p-4 mb-6">
-                        <label class="block text-sm font-medium text-slate-700 mb-2">
-                            <i data-lucide="scale" class="w-4 h-4 inline-block mr-1"></i>
-                            Scale Check-in Day
-                        </label>
-                        <select onchange="changeScaleDay(this.value)" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white">
-                            ${DAYS_OF_WEEK.map(day => `
-                                <option value="${day}" ${getScaleDay() === day ? 'selected' : ''}>${day}</option>
-                            `).join('')}
-                        </select>
-                    </div>
-                    
-                    <div class="grid gap-2">
-                        ${scheduleData.map(renderScheduleDay).join('')}
-                    </div>
-                    <div class="mt-8 bg-slate-800 text-slate-300 p-5 rounded-xl">
-                        <h3 class="text-white font-bold flex items-center gap-2 mb-3">
-                            <i data-lucide="check-circle" class="w-4 h-4"></i>
-                            Key Reminders
-                        </h3>
-                        <ul class="space-y-2 text-sm">
-                            <li>• Rest 60-90 seconds between sets.</li>
-                            <li>• Focus on good form before increasing reps.</li>
-                            <li>• Do NOT react emotionally to scale numbers—watch the weekly trend.</li>
-                        </ul>
-                    </div>
-                `;
-            } else if (tabName === 'bmi') {
-                content = renderBMICalculator();
-            }
-
-            content += `</div>`;
-            container.innerHTML = content;
-
-            // Re-initialize icons for new content
-            lucide.createIcons();
-        }
-
-        function changeWeekStart(day) {
-            setWeekStart(day);
-            renderTab('schedule');
-        }
-
-        function changeScaleDay(day) {
-            setScaleDay(day);
-            renderTab('schedule');
-        }
-
-        function renderResetButton() {
-            return `
-                <div class="mt-8 pt-6 border-t border-slate-200 text-center">
-                    <p class="text-slate-500 text-sm mb-4">Finished with your workout?</p>
-                    <button onclick="resetDay()" class="inline-flex items-center gap-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 px-8 rounded-full transition-colors">
-                        <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
-                        Reset for Tomorrow
-                    </button>
-                </div>
-            `;
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            // Apply saved dark mode preference
-            applyDarkMode(getDarkMode());
-            updateHeaderSubtitle();
-            renderTab('workoutA');
-        });
-
-    </script>
-</body>
-
-</html>
+                            <label 
